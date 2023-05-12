@@ -6,7 +6,7 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 11:50:48 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/12 12:17:18 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/12 12:57:11 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*str=NULL;
-	
+	static char	*str;
+
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
 	str = ft_read_str(fd, str);
@@ -35,8 +35,8 @@ char	*ft_read_str(int fd, char *str)
 	int		rd_bytes;
 
 	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
-    if (!buff)
-        return (NULL);
+	if (!buff)
+		return (NULL);
 	rd_bytes = 1;
 	while (!ft_strchr(str, '\n') && rd_bytes != 0)
 	{
@@ -51,11 +51,7 @@ char	*ft_read_str(int fd, char *str)
 		buff[rd_bytes] = '\0';
 		str = ft_strjoin(str, buff);
 		if (!str)
-		{	
-			if (buff)
-				free(buff);
-			return (NULL);
-		}
+			return (NULL); //dani-anadir: {if(buff)  free(buf)   return (NULL)}
 	}
 	free(buff);
 	return (str);
@@ -76,10 +72,10 @@ char	*ft_get_line(char *str)
 		return (NULL);
 	i = 0;
 	while (str[i] != '\0' && str[i] != '\n')
-		{
-			str2[i] = str[i];
-			i++;	
-		}
+	{
+		str2[i] = str[i];
+		i++;
+	}
 	str[i] = '\0';
 //	free(str);
 	return (str2);
@@ -104,17 +100,17 @@ char	*ft_new_str(char *str)
 	if (!new_str)
 		return (NULL);
 	i = a;
-	while (str[i] != '\0')// && str[i] != '\n')   //tambien != a '\n'? porque que pasa si el BUFFER_SIZE es grande y en mi buffer no hay un '\n' sino dos? es decir, que hay en total 3 trozos de lineas diferentes
-		{
-			new_str[i] = str[i];
-			i++;
-		}
+	while (str[i] != '\0') // && str[i] != '\n')   //tambien != a '\n'? porque que pasa si el BUFFER_SIZE es grande y en mi buffer no hay un '\n' sino dos? es decir, que hay en total 3 trozos de lineas diff.
+	{
+		new_str[i] = str[i];
+		i++;
+	}
 	str[i] = '\0';
 	free(str);
 	return (new_str);
 }
 
-int	main(int argc, char **argv)
+/*int	main(int argc, char **argv)
 {
 	int	fd;
 	fd = 0;
@@ -127,4 +123,4 @@ int	main(int argc, char **argv)
 		get_next_line(fd);
 	}
 	return (0);
-}
+}*/
