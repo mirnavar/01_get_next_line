@@ -6,7 +6,7 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 11:50:48 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/11 17:09:29 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/12 12:17:18 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*str;
+	static char	*str=NULL;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
@@ -51,7 +51,11 @@ char	*ft_read_str(int fd, char *str)
 		buff[rd_bytes] = '\0';
 		str = ft_strjoin(str, buff);
 		if (!str)
+		{	
+			if (buff)
+				free(buff);
 			return (NULL);
+		}
 	}
 	free(buff);
 	return (str);
@@ -68,7 +72,46 @@ char	*ft_get_line(char *str)
 	while (str[i] != '\0' && str[i] != '\n')
 		i++;
 	str2 = (char *)malloc((i + 2) * sizeof(char));
-	
+	if (!str2)
+		return (NULL);
+	i = 0;
+	while (str[i] != '\0' && str[i] != '\n')
+		{
+			str2[i] = str[i];
+			i++;	
+		}
+	str[i] = '\0';
+//	free(str);
+	return (str2);
+}
+
+char	*ft_new_str(char *str)
+{
+	int		i;
+	int		a;
+	char	*new_str;
+
+	i = 0;
+	if (!str)
+		return (NULL);
+	while (str[i] != '\0' && str[i] != '\n')
+		i++;
+	i++;
+	a = i;
+	while (str[i] != '\0')
+		i++;
+	new_str = (char *)malloc((i - a + 1) * sizeof(char));
+	if (!new_str)
+		return (NULL);
+	i = a;
+	while (str[i] != '\0')// && str[i] != '\n')   //tambien != a '\n'? porque que pasa si el BUFFER_SIZE es grande y en mi buffer no hay un '\n' sino dos? es decir, que hay en total 3 trozos de lineas diferentes
+		{
+			new_str[i] = str[i];
+			i++;
+		}
+	str[i] = '\0';
+	free(str);
+	return (new_str);
 }
 
 int	main(int argc, char **argv)
