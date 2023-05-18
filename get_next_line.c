@@ -6,13 +6,17 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 11:50:48 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/12 12:57:11 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/18 16:02:29 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 #include <fcntl.h>
+
+char	*ft_read_str(int fd, char *str);
+char	*ft_get_line(char *str);
+char	*ft_new_str(char *str);
 
 char	*get_next_line(int fd)
 {
@@ -41,15 +45,16 @@ char	*ft_read_str(int fd, char *str)
 	while (!ft_strchr(str, '\n') && rd_bytes != 0)
 	{
 		rd_bytes = read(fd, buff, BUFFER_SIZE);
-		printf("%d", rd_bytes);
+	//	printf("%d", rd_bytes);
 		if (rd_bytes == -1)
 		{
 			free(buff);
 			free(str);
-			return (0);
+			return (NULL);
 		}
 		buff[rd_bytes] = '\0';
 		str = ft_strjoin(str, buff);
+		printf("%s", str);
 		if (!str)
 			return (NULL); //dani-anadir: {if(buff)  free(buf)   return (NULL)}
 	}
@@ -71,7 +76,12 @@ char	*ft_get_line(char *str)
 	if (!str2)
 		return (NULL);
 	i = 0;
-	while (str[i] != '\0' && str[i] != '\n')
+	while (str[i] && str[i] != '\n')
+	{
+		str2[i] = str[i];
+		i++;
+	}
+	if (str[i] == '\n')
 	{
 		str2[i] = str[i];
 		i++;
@@ -90,7 +100,7 @@ char	*ft_new_str(char *str)
 	i = 0;
 	if (!str)
 		return (NULL);
-	while (str[i] != '\0' && str[i] != '\n')
+	while (str[i] && str[i] != '\n')
 		i++;
 	i++;
 	a = i;
@@ -110,7 +120,7 @@ char	*ft_new_str(char *str)
 	return (new_str);
 }
 
-/*int	main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	int	fd;
 	fd = 0;
@@ -123,4 +133,4 @@ char	*ft_new_str(char *str)
 		get_next_line(fd);
 	}
 	return (0);
-}*/
+}

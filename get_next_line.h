@@ -6,7 +6,7 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 11:52:40 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/12 12:59:39 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:20:30 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 
 char	*get_next_line(int fd);
 char	*ft_read_str(int fd, char *buff);
-char	*ft_strchr(const char *s, int c);
-char	*ft_strjoin(const char *s, const char *s2);
-size_t	ft_strlen(const char *str);
+char	*ft_strchr(char *s, int c);
+char	*ft_strjoin(char *s, char *s2);
+size_t	ft_strlen(char *str);
 char	*ft_get_line(char *str);
 char	*ft_new_str(char *str);
 
