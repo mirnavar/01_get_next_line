@@ -6,7 +6,7 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 11:50:48 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/18 16:02:29 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/18 17:30:13 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line = ft_get_line(str);
 	str = ft_new_str(str);
+	printf("%s", line);
 	return (line);
 }
 
@@ -54,7 +55,6 @@ char	*ft_read_str(int fd, char *str)
 		}
 		buff[rd_bytes] = '\0';
 		str = ft_strjoin(str, buff);
-		printf("%s", str);
 		if (!str)
 			return (NULL); //dani-anadir: {if(buff)  free(buf)   return (NULL)}
 	}
@@ -131,6 +131,7 @@ int	main(int argc, char **argv)
 		fd = open((argv[1]), O_RDONLY);
 		printf("%d\n", fd);
 		get_next_line(fd);
+	//	get_next_line(fd);
 	}
 	return (0);
 }
