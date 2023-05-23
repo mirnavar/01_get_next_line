@@ -6,7 +6,7 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/09 11:52:40 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/16 17:20:30 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/23 15:15:34 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,19 @@
 //Library for MALLOC
 # include <stdlib.h>
 
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 500
+# endif
+
 char	*get_next_line(int fd);
-char	*ft_read_str(int fd, char *buff);
-char	*ft_strchr(char *s, int c);
+char	*ft_read_str(int fd, char *str);
+char	*ft_free_join(char *str, char *buff);
+char	*ft_strchr(const char *s, int c);
 char	*ft_strjoin(char *s, char *s2);
-size_t	ft_strlen(char *str);
+size_t	ft_strlen(const char *str);
 char	*ft_get_line(char *str);
 char	*ft_new_str(char *str);
+char	*d_free(char **s1, char **s2);
+void	*ft_calloc(size_t count, size_t size);
 
 #endif

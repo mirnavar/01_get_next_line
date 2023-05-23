@@ -6,7 +6,7 @@
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 11:50:48 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/18 17:30:13 by mirnavar         ###   ########.fr       */
+/*   Updated: 2023/05/23 19:03:38 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 #include <fcntl.h>
 
 char	*ft_read_str(int fd, char *str);
-char	*ft_get_line(char *str);
-char	*ft_new_str(char *str);
+char	*ft_free_join(char *str, char *buff);
+char	*ft_get_line(char *buff);
+char	*ft_new_str(char *buff);
 
 char	*get_next_line(int fd)
 {
@@ -24,114 +25,129 @@ char	*get_next_line(int fd)
 	static char	*str;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
+	{
+		if (str)
+			d_free(&str, NULL);
+		return (NULL);
+	}
+	if (!str)
+		str = ft_calloc(1, 1);
+	if (!str)
+		return (d_free(&str, NULL));
 	str = ft_read_str(fd, str);
 	if (!str)
 		return (NULL);
 	line = ft_get_line(str);
+	if (!line || *line == '\0')
+		return (d_free(&str, &line));
 	str = ft_new_str(str);
-	printf("%s", line);
 	return (line);
 }
 
 char	*ft_read_str(int fd, char *str)
 {
 	char	*buff;
-	int		rd_bytes;
+	int		bytes;
 
-	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	bytes = 1;
+	buff = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buff)
-		return (NULL);
-	rd_bytes = 1;
-	while (!ft_strchr(str, '\n') && rd_bytes != 0)
+		return (d_free(&str, &buff));
+	while (bytes > 0)
 	{
-		rd_bytes = read(fd, buff, BUFFER_SIZE);
-	//	printf("%d", rd_bytes);
-		if (rd_bytes == -1)
-		{
-			free(buff);
-			free(str);
-			return (NULL);
-		}
-		buff[rd_bytes] = '\0';
-		str = ft_strjoin(str, buff);
+		bytes = read(fd, buff, BUFFER_SIZE);
+		if (bytes < 0)
+			return (d_free(&str, &buff));
+		buff[bytes] = '\0';
+		str = ft_free_join(str, buff);
 		if (!str)
-			return (NULL); //dani-anadir: {if(buff)  free(buf)   return (NULL)}
+			return (NULL);
+		if (ft_strchr(buff, '\n'))
+			break ;
 	}
-	free(buff);
+	d_free(&buff, NULL);
 	return (str);
 }
 
-char	*ft_get_line(char *str)
+char	*ft_free_join(char *str, char *buff)
 {
-	int		i;
-	char	*str2;
+	char	*s;
 
-	i = 0;
-	if (!str[i])
-		return (NULL);
-	while (str[i] != '\0' && str[i] != '\n')
-		i++;
-	str2 = (char *)malloc((i + 2) * sizeof(char));
-	if (!str2)
-		return (NULL);
-	i = 0;
-	while (str[i] && str[i] != '\n')
-	{
-		str2[i] = str[i];
-		i++;
-	}
-	if (str[i] == '\n')
-	{
-		str2[i] = str[i];
-		i++;
-	}
-	str[i] = '\0';
-//	free(str);
-	return (str2);
+	s = ft_strjoin(str, buff);
+	if (!s)
+		return (d_free(&str, &buff));
+	d_free(&str, 0);
+	return (s);
 }
 
-char	*ft_new_str(char *str)
+char	*ft_get_line(char *buff)
 {
-	int		i;
-	int		a;
-	char	*new_str;
+	int		len;
+	char	*line;
 
-	i = 0;
-	if (!str)
+	len = 0;
+	line = NULL;
+	if (!buff)
 		return (NULL);
-	while (str[i] && str[i] != '\n')
-		i++;
-	i++;
-	a = i;
-	while (str[i] != '\0')
-		i++;
-	new_str = (char *)malloc((i - a + 1) * sizeof(char));
-	if (!new_str)
+	while (buff[len] && buff[len] != '\n')
+		len++;
+	if (buff[len] == '\n')
+		len++;
+	line = ft_calloc(len + 1, sizeof(char));
+	if (!line)
 		return (NULL);
-	i = a;
-	while (str[i] != '\0') // && str[i] != '\n')   //tambien != a '\n'? porque que pasa si el BUFFER_SIZE es grande y en mi buffer no hay un '\n' sino dos? es decir, que hay en total 3 trozos de lineas diff.
+	len = 0;
+	while (buff[len] && buff[len] != '\n')
 	{
-		new_str[i] = str[i];
-		i++;
+		line[len] = buff[len];
+		len++;
 	}
-	str[i] = '\0';
-	free(str);
-	return (new_str);
+	if (buff[len] == '\n')
+		line[len] = '\n';
+	return (line);
 }
 
-int	main(int argc, char **argv)
+char	*ft_new_str(char *buff)
+{
+	int		len;
+	int		i;
+	char	*new;
+
+	len = 0;
+	while (buff[len] && buff[len] != '\n')
+		len++;
+	if (!buff[len])
+		return (d_free(&buff, NULL));
+	new = malloc(ft_strlen(buff) - len + 1 * sizeof(char));
+	if (!new)
+		return (d_free(&buff, NULL));
+	len++;
+	i = 0;
+	while (buff[len])
+		new[i++] = buff[len++];
+	new[i] = '\0';
+	d_free(&buff, NULL);
+	return (new);
+}
+
+/*int	main(int argc, char **argv)
 {
 	int	fd;
 	fd = 0;
-//	printf("%d", argc);
-//	printf("%s", (argv[1]));
 	if (argc > 1)
 	{
-		fd = open((argv[1]), O_RDONLY);
-		printf("%d\n", fd);
+		fd = open(argv[1], O_RDONLY);
+		if (fd < 0)
+		{	printf("Error fd: %s", argv[1]);
+			exit(1);
+		}
 		get_next_line(fd);
-	//	get_next_line(fd);
+		get_next_line(fd);
+	//	printf("%s\n", get_next_line(fd));
+	//	printf("%s\n", get_next_line(fd));
+//		char *buff = ft_read_str(fd, buff);
+//		printf("%s\n", buff);
 	}
+	close(fd);
 	return (0);
-}
+}*/
