@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mirnavar <mirnavar@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/10 11:50:48 by mirnavar          #+#    #+#             */
-/*   Updated: 2023/05/24 11:45:12 by mirnavar         ###   ########.fr       */
+/*   Created: 2023/05/24 11:12:40 by mirnavar          #+#    #+#             */
+/*   Updated: 2023/05/24 13:05:33 by mirnavar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 //#include <stdio.h> - Library for PRINTF (Main)
 //#include <fcntl.h> - Library for OPEN (Main)
 
@@ -22,25 +22,21 @@ char	*ft_new_str(char *buff);
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*str;
+	static char	*str[OPEN_MAX];
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-	{
-		if (str)
-			d_free(&str, NULL);
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
 		return (NULL);
-	}
-	if (!str)
-		str = ft_calloc(1, 1);
-	if (!str)
-		return (d_free(&str, NULL));
-	str = ft_read_str(fd, str);
-	if (!str)
+	if (!str[fd])
+		str[fd] = (char *)ft_calloc(1, 1);
+	if (!str[fd])
+		return (d_free(&str[fd], NULL));
+	str[fd] = ft_read_str(fd, str[fd]);
+	if (!str[fd])
 		return (NULL);
-	line = ft_get_line(str);
+	line = ft_get_line(str[fd]);
 	if (!line || *line == '\0')
-		return (d_free(&str, &line));
-	str = ft_new_str(str);
+		return (d_free(&str[fd], &line));
+	str[fd] = ft_new_str(str[fd]);
 	return (line);
 }
 
